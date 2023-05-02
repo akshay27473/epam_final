@@ -1,0 +1,8 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1
+filters:
+  # All instances with their `Name` tag set to `dev
+  tag:Name:
+    - instance_1
+    - instance_2

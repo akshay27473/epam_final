@@ -1,0 +1,39 @@
+- name: Provision Web Servers
+  hosts: aws_ec2
+  tasks:
+
+  - name: Install pip3
+    apt:
+      update_cache: yes
+      name: python3-pip
+    become: yes
+
+  - name: Install python docker sdk
+    shell: |
+      pip3 install docker
+    become: yes
+
+  - name: Install docker
+    apt:
+      name: docker.io
+    become: yes
+
+  - name: Start Docker
+    shell: |
+      systemctl start docker
+      systemctl enable docker
+    become: yes
+
+  - name: Pull the image
+    docker_image:
+      name: ak27473/nginx-static
+      source: pull
+
+  - name: Run the container
+    docker_container:
+      name: hello
+      image: ak27473/nginx-static
+      state: started
+      ports:
+        - "80:80"
+        - "443:443"
