@@ -1,0 +1,39 @@
+
+
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main', credentialsId: 'akshay-github', url: 'git@github.com:akshay27473/epam_final.git'
+      }
+    }
+
+    stage('Terraform') {
+      steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: 'akshay-aws',
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+        ]]) {
+          sh '''
+            cd terraform/static-site
+            terraform init
+            terraform apply 
+           
+          '''
+        }
+      }
+    }
+    
+    stage('Ansible') {
+      steps {
+         
+          sh 'ansible-playbook -i /etc/ansible/aws_ec2.yaml ansible/static-site/site.yaml'
+        
+      }
+    }
+  }
+}
