@@ -21,7 +21,7 @@ pipeline {
           sh '''
             cd terraform/static-site
             terraform init
-            terraform apply 
+            terraform apply --auto-approve 
            
           '''
         }
@@ -31,7 +31,7 @@ pipeline {
     stage('Ansible') {
       steps {
          
-          sh 'ansible-playbook -i /etc/ansible/aws_ec2.yaml ansible/static-site/site.yaml'
+          sh 'ansible-playbook -i /etc/ansible/aws_ec2.yaml ansible/static-site/site.yaml --private-key= ansible/epamkey.pem'
         
       }
     }
